@@ -1,10 +1,12 @@
 import React, { Suspense } from 'react';
 import Categories from '../../components/Categories';
+import Loading from '../Auth/Loading/Loading';
 
 const LeftAside = () => {
     return (
         <aside className='col-span-3 sticky top-0 h-fit'>
-            <Suspense fallback={<div className="w-16 h-16 border-4 border-dashed rounded-full animate-spin dark:border-violet-600"></div>}>
+            {import.meta.env.VITE_name}
+            <Suspense fallback={<Loading></Loading>}>
                 <Categories></Categories>
             </Suspense>
         </aside>

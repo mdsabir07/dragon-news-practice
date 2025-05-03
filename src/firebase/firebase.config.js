@@ -7,12 +7,12 @@ import { getAuth } from "firebase/auth";
 // Your web app's Firebase configuration
 // Danger: Don't share in public
 const firebaseConfig = {
-  apiKey: "AIzaSyB2cIjy5l_da9h3JqxWnIqB6NYA26qDLFQ",
-  authDomain: "dragon-news-2d041.firebaseapp.com",
-  projectId: "dragon-news-2d041",
-  storageBucket: "dragon-news-2d041.firebasestorage.app",
-  messagingSenderId: "125287025620",
-  appId: "1:125287025620:web:90923c3577f5558362a441"
+  apiKey: import.meta.env.VITE_apiKey,
+  authDomain: import.meta.env.VITE_authDomain,
+  projectId: import.meta.env.VITE_projectId,
+  storageBucket: import.meta.env.VITE_storageBucket,
+  messagingSenderId: import.meta.env.VITE_messagingSenderId,
+  appId: import.meta.env.VITE_appId,
 };
 
 // Initialize Firebase

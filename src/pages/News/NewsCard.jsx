@@ -1,9 +1,10 @@
 import React from 'react';
 import { FaBookmark, FaRegEye, FaStar } from 'react-icons/fa';
 import { IoShareSocialOutline } from 'react-icons/io5';
+import { Link } from 'react-router';
 
 const NewsCard = ({ news }) => {
-    const { title, rating, total_view, author, thumbnail_url, image_url, details } = news;
+    const { id, title, rating, total_view, author, thumbnail_url, image_url, details } = news;
     return (
         <div className='border border-base-200'>
             <div className='bg-base-200 p-3 flex justify-between items-center'>
@@ -22,7 +23,14 @@ const NewsCard = ({ news }) => {
             <div className='p-3'>
                 <h3 className='text-2xl font-semibold'>{title}</h3>
                 <img src={thumbnail_url} className='rounded-xl mt-5' alt="" />
-                <p>{details}</p>
+                <p>{
+                    details.length > 200 ? <>
+                        {details.slice(0, 200)}...
+                        <Link to={`/news-details/${id}`} className='cursor-pointer font-medium text-primary hover:underline'>Read more</Link>
+                    </>
+                        :
+                        details
+                }</p>
 
                 <div className='flex justify-between items-center pt-5 mt-5 border-t border-base-200'>
                     <div className='flex gap-2 items-center'>
