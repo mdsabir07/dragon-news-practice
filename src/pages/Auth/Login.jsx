@@ -1,14 +1,20 @@
-import React, { use, useState } from 'react';
+import React, { use, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router';
 import { AuthContext } from '../../provider/AuthProvider';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../../firebase/firebase.config';
 
 const Login = () => {
 
+    const [success, setSuccess] = useState(false);
     const [error, setError] = useState('');
 
-    const { signIn, setUser } = use(AuthContext);
+    // for forgot password
+    const emailRef = useRef();
+
+    const { signIn, setUser, logOut } = use(AuthContext);
     const location = useLocation();
-    console.log(location);
+    // console.log(location);
 
     const navigate = useNavigate();
 
@@ -18,17 +24,44 @@ const Login = () => {
         const form = e.target;
         const email = form.email.value;
         const password = form.password.value;
-        console.log(email, password);
+        // console.log(email, password);
+
+        setSuccess(false);
+        setError('');
 
         signIn(email, password)
             .then(res => {
                 const user = res.user;
                 setUser(user);
+                if (!user.emailVerified) {
+                    alert("Please verify your email before login");
+                    logOut();
+                } else {
+                    setSuccess(true);
+                }
                 navigate(`${location.state ? location.state : "/"}`);
             })
             .catch(error => {
-                const errorCode = error.code;
-                setError(errorCode);
+                // const errorCode = error.code;
+                const errorMessage = error.message;
+                setError(errorMessage);
+            })
+    }
+
+    // Reset password
+    const handleForgotPassword = () => {
+        const email = emailRef.current.value;
+
+        setError('');
+
+        // send password reset email
+        sendPasswordResetEmail(auth, email)
+            .then(() => {
+                alert("We've sent password reset link on your email.");
+            })
+            .catch(error => {
+                const errorMessage = error.message;
+                setError(errorMessage);
             })
     }
     return (
@@ -46,6 +79,7 @@ const Login = () => {
                             type="email"
                             name="email"
                             id="email"
+                            ref={emailRef}
                             placeholder="leroy@jenkins.com"
                             className="w-full px-3 py-2 border rounded-md dark:border-gray-300 dark:bg-gray-50 dark:text-gray-800"
                             required />
@@ -54,7 +88,7 @@ const Login = () => {
                     <div>
                         <div className="flex justify-between mb-2">
                             <label htmlFor="password" className="text-sm">Password</label>
-                            <a rel="noopener noreferrer" href="#" className="text-xs hover:underline dark:text-gray-600">Forgot password?</a>
+                            <div onClick={handleForgotPassword}><a className="cursor-pointer text-xs hover:underline dark:text-gray-600">Forgot password?</a></div>
                         </div>
                         <input
                             type="password"
@@ -65,7 +99,6 @@ const Login = () => {
                             required />
                     </div>
                 </div>
-                {error && <p className='text-red-600'>{error}</p>}
                 <div className="space-y-2">
                     <div>
                         <button type="submit" className="cursor-pointer w-full px-8 py-3 font-semibold rounded-md dark:bg-violet-600 dark:text-gray-50">Sign in</button>
@@ -75,6 +108,9 @@ const Login = () => {
                     </p>
                 </div>
             </form>
+
+            {error && <p className='text-red-600'>{error}</p>}
+            {success && <p className='text-green-600'>Logged in successfully!</p>}
         </div>
     );
 };
